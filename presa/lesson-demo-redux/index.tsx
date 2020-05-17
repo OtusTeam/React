@@ -7,9 +7,7 @@ import {
   Alert,
   CenteredPlainLayout,
   AlertSlide,
-  AlertDescription,
   TitleSlide,
-  CameraImage,
   Avatar,
   Card,
   CardTitle,
@@ -17,7 +15,6 @@ import {
   CardDesc,
   List,
   ListItem,
-  IconText,
   GlobalStyle,
   NoticeBlock,
   FullWidthFragment,
@@ -29,57 +26,21 @@ import { LiftingStateSlide } from './slides/LiftingState'
 import { Code } from '@saitonakamura/presa/lib/blocks'
 import { ReduxDiagramSlide } from './slides/ReduxDiagramSlide'
 import CodesandboxImgUrl from '../assets/codesandbox.png'
+import {
+  CheckRecordSlide,
+  CheckSoundVideoSlide,
+  RulesSlide,
+  QuestionsSlide,
+} from '../lib/slides'
 
 const App = () => (
   <>
     <Presentation name='Otus demo lesson: Redux' theme={theme}>
-      <TitleSlide name='Проверяем запись' title='Проверить, идет ли запись!'>
-        <CenteredPlainLayout>
-          <CameraImage />
-        </CenteredPlainLayout>
-      </TitleSlide>
+      <CheckRecordSlide />
 
-      <AlertSlide name='Проверяем связь'>
-        <Alert>
-          Меня хорошо видно && слышно?
-          <AlertDescription>
-            Ставьте ➕ , если все хорошо
-            <br />
-            Напишите в чат, если есть проблемы
-          </AlertDescription>
-        </Alert>
-      </AlertSlide>
+      <CheckSoundVideoSlide />
 
-      <TitleSlide name='Правила' title='Правила вебинара'>
-        <List>
-          <Fragment>
-            <ListItem>
-              <IconText icon='talk'>Активно участвуем</IconText>
-            </ListItem>
-          </Fragment>
-          <Fragment>
-            <ListItem>
-              <IconText icon='questions'>
-                Задаем вопрос в чат или голосом
-              </IconText>
-            </ListItem>
-          </Fragment>
-          <Fragment>
-            <ListItem>
-              <IconText icon='slack'>
-                Off-topic обсуждаем в Slack #канал группы или #general
-              </IconText>
-            </ListItem>
-          </Fragment>
-          <Fragment>
-            <ListItem>
-              <IconText icon='time'>
-                Вопросы вижу в чате, могу ответить не сразу
-              </IconText>
-            </ListItem>
-          </Fragment>
-        </List>
-      </TitleSlide>
+      <RulesSlide />
 
       <AlertSlide name='Redux'>
         <Alert>Redux</Alert>
@@ -99,7 +60,7 @@ const App = () => (
           </CardContent>
         </Card>
       </AlertSlide>
-{/* 
+      {/* 
       <AlertSlide name='Redux'>
         <Alert>Redux</Alert>
       </AlertSlide> */}
@@ -226,7 +187,10 @@ const App = () => (
           >
             https://codesandbox.io/s/otus-redux-demo-lesson-start-64ijq?file=/src/index.js
           </a>
-          <img style={{ width: '600px', marginTop: '40px' }} src={CodesandboxImgUrl}></img>
+          <img
+            style={{ width: '600px', marginTop: '40px' }}
+            src={CodesandboxImgUrl}
+          ></img>
         </CenteredPlainLayout>
       </TitleSlide>
 
@@ -280,11 +244,7 @@ const App = () => (
         </CenteredLayout>
       </TitleSlide>
 
-      <TitleSlide name='Вопросы' title='Остались вопросы?' layout='centered'>
-        <CenteredLayout>
-          <Text size={150}>🎤</Text>
-        </CenteredLayout>
-      </TitleSlide>
+      <QuestionsSlide />
     </Presentation>
     <GlobalStyle />
   </>
