@@ -8,7 +8,7 @@
     "build:fp": "cross-env LESSON=fp yarn build:abstract",
     "start:demo-redux": "cross-env LESSON=demo-redux yarn start:abstract",
     "build:demo-redux": "cross-env LESSON=demo-redux yarn build:abstract",
-    "start:abstract": "parcel serve --cache-dir .cache-${LESSON} lesson-${LESSON}/index.html",
+    "start:abstract": "parcel serve --cache-dir .cache-${LESSON} --out-dir dist-${LESSON} lesson-${LESSON}/index.html",
     "build:abstract": "rimraf docs-${LESSON} && parcel build --cache-dir .cache-${LESSON} --out-dir docs-${LESSON} --public-url . lesson-${LESSON}/index.html"
   },
   "dependencies": {

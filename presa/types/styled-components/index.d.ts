@@ -6,5 +6,13 @@ declare module 'styled-components' {
     secondaryColor: string
     whiteTextColor: string
     paperBackgroundColor: string
+    gutter: {
+      xs: number
+      s: number
+      m: number
+      l: number
+      xl: number
+      xxl: number
+    }
   }
 }

@@ -58,7 +58,7 @@ declare module '@saitonakamura/presa' {
   export type SlideProps = {
     background?: string
     name?: string
-    layout?: 'plain' | 'centered' | React.ComponentType<unknown>
+    layout?: 'plain' | 'centered' | ((children: React.ReactNode) => React.ReactElement<any, any>)
     children?: React.ReactNode
   } & Stylable
 

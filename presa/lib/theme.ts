@@ -14,4 +14,12 @@ export const theme: DefaultTheme = {
   monoFont: 'Fira Code, ' +
     '"SF Mono", "Monaco", "Inconsolata", "Fira Mono", "Droid Sans Mono", ' +
     '"Source Code Pro", monospace',
+  gutter: {
+    xs: 10,
+    s: 20,
+    m: 40,
+    l: 80,
+    xl: 120,
+    xxl: 180,
+  }
 } as DefaultTheme

@@ -36,11 +36,11 @@ import {
 const App = () => (
   <>
     <Presentation name='Otus demo lesson: Redux' theme={theme}>
-      <CheckRecordSlide />
+      {CheckRecordSlide}
 
-      <CheckSoundVideoSlide />
+      {CheckSoundVideoSlide}
 
-      <RulesSlide />
+      {RulesSlide}
 
       <AlertSlide name='Redux'>
         <Alert>Redux</Alert>
@@ -244,7 +244,7 @@ const App = () => (
         </CenteredLayout>
       </TitleSlide>
 
-      <QuestionsSlide />
+      {QuestionsSlide}
     </Presentation>
     <GlobalStyle />
   </>

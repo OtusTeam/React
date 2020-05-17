@@ -1,5 +1,5 @@
 import React from 'react'
-import styled, { css, createGlobalStyle } from 'styled-components'
+import styled, { css, createGlobalStyle, DefaultTheme } from 'styled-components'
 import {
   PlainLayout,
   DefaultLayout,
@@ -7,15 +7,23 @@ import {
 import { Slide, SlideProps, Fragment } from '@saitonakamura/presa'
 import CameraImgUrl from '../assets/image3.png'
 import AvatarImgUrl from '../assets/avatar.jpg'
-import QuestionImgUrl from '../assets/questions.png'
-import SlackImgUrl from '../assets/slack.png'
-import TalkImgUrl from '../assets/talk.png'
-import TimeImgUrl from '../assets/time.png'
 // import ReduxImgUrl from '../assets/time.png'
-import { theme } from './theme'
+import {
+  verticallyCentered,
+  centered,
+  headingTypography,
+  horizontalWrapFlex,
+  horizontalFlex,
+  verticalFlex,
+  dividerLeft,
+  plainLayout,
+  padding,
+} from './mixins'
+import { sizeToPx, iconToUrl, matchColor } from './utils'
+import type { Size, Color, IconType } from './utils'
 
 export const Text = styled.span<{ size: Size }>`
-  font-size: ${p => matchSize(18, 36, 48)(p.size)};
+  font-size: ${(p) => matchSize(18, 36, 48)(p.size)};
   line-height: 1.2em;
 `
 
@@ -32,63 +40,6 @@ export const GlobalStyle = createGlobalStyle`
   ul, h1, h2, h3, h4, h5, h6, li, pre {
     margin: 0;
   }
-`
-
-const headingTypography = css`
-  font-family: Nunito, ${(p) => p.theme.baseFont};
-`
-
-type Size = 's' | 'm' | 'l' | number
-type Color = 'primary' | 'secondary' | 'white'
-
-const dividerRight = css`
-  border-right: 1px solid ${(p) => p.theme.mutedTextColor};
-`
-
-const dividerLeft = css`
-  border-left: 1px solid ${(p) => p.theme.mutedTextColor};
-`
-
-const centered = css`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-`
-
-// export const absolutePosition
-
-const verticallyCentered = css`
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  text-align: center;
-`
-
-const verticalFlex = css`
-  display: flex;
-  flex-direction: column;
-  justify-content: stretch;
-  align-items: flex-start;
-  flex-wrap: no-wrap;
-`
-
-const horizontalFlex = css`
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  flex-wrap: no-wrap;
-`
-
-const horizontalWrapFlex = css`
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: flex-start;
-  flex-wrap: wrap;
 `
 
 export const GradientBlock = styled.div`
@@ -133,16 +84,22 @@ export const HorizontalPlainLayout = styled(PlainLayout)<{
 }>`
   ${horizontalFlex};
   > * + * {
-    margin-left: ${(p) => matchSize(20, 40, 80)(p.gapSize || 'm')};
+    margin-left: ${(p) => sizeToPx(p.theme, p.gapSize ?? 'm')};
   }
 `
+
 export const HorizontalLayout = styled(DefaultLayout)<{
   gapSize?: Size
 }>`
   ${horizontalFlex};
   > * + * {
-    margin-left: ${(p) => matchSize(20, 40, 80)(p.gapSize || 'm')};
+    margin-left: ${(p) => sizeToPx(p.theme, p.gapSize ?? 'm')};
   }
+`
+
+export const VerticalPlainLayout = styled.div<{ gapSize?: Size }>`
+  ${plainLayout};
+  ${verticalFlex};
 `
 
 export const HorizontalWrapSlide = (props: SlideProps) => (
@@ -158,11 +115,14 @@ export const AlertDescription = styled.span`
   font-weight: normal;
 `
 
-export const AlertSlide = (props: SlideProps) => (
+export const AlertSlide = (props: SlideProps & { alert: string }) => (
   <Slide
     {...props}
     layout={(children) => <CenteredPlainLayout children={children} />}
-  />
+  >
+    <Alert>{props.alert}</Alert>
+    {props.children}
+  </Slide>
 )
 
 const TitleContainer = styled(GradientBlock)`
@@ -170,6 +130,7 @@ const TitleContainer = styled(GradientBlock)`
   width: 100%;
   padding: 10px 50px;
   height: 120px;
+  min-height: 120px;
   ${headingTypography};
 `
 
@@ -179,19 +140,33 @@ export const Title = styled.h1`
   ${headingTypography};
 `
 
-const TitleSlideContent = styled.div`
+const TitleSlideContent = styled.div<{ padding?: Size }>`
   ${verticalFlex};
-  padding: 50px;
+  ${(p) => padding(p.padding ?? 'm')};
 `
 
-export const TitleSlide = (props: SlideProps & { title: React.ReactNode }) => (
-  <Slide {...props} layout={(children) => <PlainLayout children={children} />}>
-    <TitleContainer>
-      <Title>{props.title}</Title>
-    </TitleContainer>
-    <TitleSlideContent>{props.children}</TitleSlideContent>
-  </Slide>
-)
+type Layout = React.ComponentType<any>
+
+export const TitleSlide = (
+  props: Omit<SlideProps, 'layout'> & {
+    title: React.ReactNode
+    layout?: Layout
+  },
+) => {
+  const Layout = props.layout ?? TitleSlideContent
+
+  return (
+    <Slide
+      {...props}
+      layout={(children) => <VerticalPlainLayout children={children} />}
+    >
+      <TitleContainer>
+        <Title>{props.title}</Title>
+      </TitleContainer>
+      <Layout>{props.children}</Layout>
+    </Slide>
+  )
+}
 
 export const CameraImage = styled.img.attrs({
   src: CameraImgUrl,
@@ -256,26 +231,9 @@ export const List = styled.ul<{ gapSize?: Size }>`
   list-style-type: none;
 
   > * + * {
-    margin-top: ${p => matchSize(15, 20, 30)(p.gapSize || 'm')};
+    margin-top: ${(p) => sizeToPx(p.theme, p.gapSize || 'm')};
   }
 `
-
-export type Icon = 'talk' | 'time' | 'slack' | 'questions' | 'camera'
-
-export const iconToUrl = (icon: Icon) => {
-  switch (icon) {
-    case 'camera':
-      return CameraImgUrl
-    case 'questions':
-      return QuestionImgUrl
-    case 'slack':
-      return SlackImgUrl
-    case 'talk':
-      return TalkImgUrl
-    case 'time':
-      return TimeImgUrl
-  }
-}
 
 export const Icon = styled.img`
   width: 2em;
@@ -291,7 +249,10 @@ export const IconTextContainer = styled.div`
   }
 `
 
-export const IconText = (props: { icon: Icon; children: React.ReactNode }) => (
+export const IconText = (props: {
+  icon: IconType
+  children: React.ReactNode
+}) => (
   <IconTextContainer>
     <Icon src={iconToUrl(props.icon)} />
     <span>{props.children}</span>
@@ -299,7 +260,7 @@ export const IconText = (props: { icon: Icon; children: React.ReactNode }) => (
 )
 
 const matchSize = (s: number, m: number, l: number) => (size: Size) => {
-  if (typeof size === 'number') return `${size}px`;
+  if (typeof size === 'number') return `${size}px`
 
   switch (size) {
     case 's':
@@ -311,28 +272,18 @@ const matchSize = (s: number, m: number, l: number) => (size: Size) => {
   }
 }
 
-const matchColor = (color: Color) => {
-  switch (color) {
-    case 'primary':
-      return theme.primaryColor
-    case 'secondary':
-      return theme.secondaryColor
-    case 'white':
-      return theme.whiteTextColor
-  }
-}
-
 export const NoticeBlock = styled.div<{
   horizontalPadding?: Size
   backgroundColor?: Color
   fullWidth?: boolean
 }>`
-  background-color: ${(p) => matchColor(p.backgroundColor ?? 'primary')};
+  background-color: ${(p) =>
+    matchColor(p.theme, p.backgroundColor ?? 'primary')};
   font-weight: bold;
   font-size: 35px;
   border-radius: 10px;
   color: ${(p) => p.theme.whiteTextColor};
-  padding: 15px ${(p) => matchSize(20, 40, 80)(p.horizontalPadding ?? 'm')};
+  padding: 15px ${(p) => sizeToPx(p.theme, p.horizontalPadding ?? 'm')};
   width: ${(p) => (p.fullWidth ? '100%' : 'auto')};
   text-align: center;
   ${headingTypography};
@@ -342,6 +293,13 @@ export const FullWidthFragment = styled(Fragment)`
   width: 100%;
 `
 
-export const elevated = css`
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+export const OuterLink = styled.a.attrs({
+  rel: 'noopener noreferrer',
+  target: '_blank',
+})`
+  text-decoration: none;
+
+  &:hover {
+    background-color: ${(p) => p.theme.primaryColor};
+  }
 `
